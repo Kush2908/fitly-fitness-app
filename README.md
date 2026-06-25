@@ -54,5 +54,5 @@ node .\build-frontend.js
 - `web/styles.css`: responsive styling
 =======
 # fitly-fitness-app
-Full-stack fitness tracking application built with React, Node.js, Express, and MongoDB.
+Full-stack fitness tracking application built with React, Node.js, Express, and SQLite.
  9abc96adba66f7b799b608a5a0dc57aaa1fecfa7

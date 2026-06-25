@@ -1,3 +1,4 @@
+HEAD
 # Fitly
 
 Fitly is a local full-stack fitness tracking app inspired by products like Google Fit and Cult Fitness.
@@ -51,3 +52,7 @@ node .\build-frontend.js
 - `web/app.js`: React UI logic
 - `web/app.compiled.js`: browser-ready React UI
 - `web/styles.css`: responsive styling
+=======
+# fitly-fitness-app
+Full-stack fitness tracking application built with React, Node.js, Express, and MongoDB.
+ 9abc96adba66f7b799b608a5a0dc57aaa1fecfa7

@@ -55,4 +55,3 @@ node .\build-frontend.js
 =======
 # fitly-fitness-app
 Full-stack fitness tracking application built with React, Node.js, Express, and SQLite.
- 9abc96adba66f7b799b608a5a0dc57aaa1fecfa7

@@ -143,18 +143,6 @@ web/app.compiled.js
 
 ---
 
-## 📸 Application Screenshots
-
-> Add screenshots of the following pages for a better GitHub presentation.
-
-* Login Page
-* Registration Page
-* Dashboard
-* Workout Tracker
-* Nutrition Tracker
-* Goals Dashboard
-* Daily Activity Tracker
-* Training Plans
 
 ---
 

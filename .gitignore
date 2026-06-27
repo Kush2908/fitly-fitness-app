@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+
+# Database
+fitness.db
+
+# Logs
+*.log
+server.err.log
+server.out.log
+
+# IDE
+.vscode/
+.idea/

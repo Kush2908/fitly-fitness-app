@@ -142,6 +142,14 @@ def init_db():
                 FOREIGN KEY(user_id) REFERENCES users(id)
             );
 
+            CREATE TABLE IF NOT EXISTS water_logs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                amount INTEGER NOT NULL,
+                log_date TEXT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            );
+
             CREATE TABLE IF NOT EXISTS meals (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id INTEGER NOT NULL,
@@ -261,7 +269,14 @@ def get_today_habit(conn, user_id):
         "SELECT * FROM habits WHERE user_id = ? AND entry_date = ?",
         (user_id, today),
     ).fetchone()
-    return dict(row) if row else None
+    habit = dict(row) if row else None
+    if habit:
+        water_row = conn.execute(
+            "SELECT COALESCE(SUM(amount), 0) as total FROM water_logs WHERE user_id = ? AND log_date LIKE ?",
+            (user_id, f"{today}%")
+        ).fetchone()
+        habit["water_glasses"] = water_row["total"]
+    return habit
 
 
 def get_programs(progress_map=None):
@@ -421,6 +436,19 @@ def build_history(conn, user_id, days=14):
         ).fetchall()
     }
 
+    water_data = {
+        row["day"]: row["total"]
+        for row in conn.execute(
+            """
+            SELECT substr(log_date, 1, 10) as day, COALESCE(SUM(amount), 0) AS total
+            FROM water_logs
+            WHERE user_id = ? AND substr(log_date, 1, 10) >= ?
+            GROUP BY day
+            """,
+            (user_id, start),
+        ).fetchall()
+    }
+
     history = []
     for offset in range(days - 1, -1, -1):
         day = date.today() - timedelta(days=offset)
@@ -433,7 +461,7 @@ def build_history(conn, user_id, days=14):
                 "date": key,
                 "label": day.strftime("%a"),
                 "steps": habit.get("steps", workout.get("estimated_steps", 0)),
-                "water_glasses": habit.get("water_glasses", 0),
+                "water_glasses": max(water_data.get(key, 0), habit.get("water_glasses", 0)),
                 "sleep_hours": habit.get("sleep_hours", 0),
                 "move_calories": habit.get("move_calories", workout.get("calories", 0)),
                 "minutes": workout.get("minutes", 0),
@@ -986,6 +1014,17 @@ class FitnessHandler(SimpleHTTPRequestHandler):
                         number_or_zero(payload.get("arms", 0)),
                         payload.get("notes", "").strip(),
                     ),
+                )
+                conn.commit()
+            return json_response(self, {"ok": True})
+
+        if parsed.path == "/api/water":
+            amount = int(payload.get("amount", 1))
+            log_date = datetime.now().isoformat()
+            with connect_db() as conn:
+                conn.execute(
+                    "INSERT INTO water_logs (user_id, amount, log_date) VALUES (?, ?, ?)",
+                    (user["id"], amount, log_date)
                 )
                 conn.commit()
             return json_response(self, {"ok": True})

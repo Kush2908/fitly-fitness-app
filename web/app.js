@@ -1,4 +1,4 @@
-﻿const { useEffect, useMemo, useState } = React;
+const { useEffect, useMemo, useState } = React;
 
 const api = async (path, options = {}, token = localStorage.getItem("fitly-token")) => {
   const response = await fetch(path, {
@@ -650,14 +650,14 @@ function Dashboard({ user, data, onRefresh, onLogout }) {
                     post("/api/habits/today", habitForm);
                   }}
                 >
-                  <label>
-                    Water glasses
-                    <input
-                      type="number"
-                      value={habitForm.water_glasses}
-                      onChange={(e) => setHabitForm({ ...habitForm, water_glasses: Number(e.target.value) })}
-                    />
-                  </label>
+                  <div className="water-logger" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                    <span style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--text-secondary)' }}>Water glasses</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                      <button type="button" className="ghost-button" onClick={() => post("/api/water", {amount: -1})}>-</button>
+                      <strong style={{ fontSize: '1.25rem' }}>{data.today.water_glasses}</strong>
+                      <button type="button" className="ghost-button" onClick={() => post("/api/water", {amount: 1})}>+</button>
+                    </div>
+                  </div>
                   <label>
                     Sleep hours
                     <input

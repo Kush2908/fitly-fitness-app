@@ -729,14 +729,43 @@ function Dashboard({
       e.preventDefault();
       post("/api/habits/today", habitForm);
     }
-  }, /*#__PURE__*/React.createElement("label", null, "Water glasses", /*#__PURE__*/React.createElement("input", {
-    type: "number",
-    value: habitForm.water_glasses,
-    onChange: e => setHabitForm({
-      ...habitForm,
-      water_glasses: Number(e.target.value)
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "water-logger",
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '0.5rem',
+      marginBottom: '0.5rem'
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: '0.875rem',
+      fontWeight: 500,
+      color: 'var(--text-secondary)'
+    }
+  }, "Water glasses"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '1rem'
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    className: "ghost-button",
+    onClick: () => post("/api/water", {
+      amount: -1
     })
-  })), /*#__PURE__*/React.createElement("label", null, "Sleep hours", /*#__PURE__*/React.createElement("input", {
+  }, "-"), /*#__PURE__*/React.createElement("strong", {
+    style: {
+      fontSize: '1.25rem'
+    }
+  }, data.today.water_glasses), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    className: "ghost-button",
+    onClick: () => post("/api/water", {
+      amount: 1
+    })
+  }, "+"))), /*#__PURE__*/React.createElement("label", null, "Sleep hours", /*#__PURE__*/React.createElement("input", {
     type: "number",
     step: "0.5",
     value: habitForm.sleep_hours,

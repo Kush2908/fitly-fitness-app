@@ -480,6 +480,15 @@ function Dashboard({ user, data, onRefresh, onLogout }) {
   });
   const [notice, setNotice] = useState("");
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  useEffect(() => {
+    if (isDrawerOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+  }, [isDrawerOpen]);
 
   useEffect(() => {
     setHabitForm({
@@ -605,14 +614,28 @@ function Dashboard({ user, data, onRefresh, onLogout }) {
 
   return (
     <div className="app-shell">
-      <aside className="sidebar">
+      <header className="mobile-header">
         <div className="brand">
           <div className="brand-mark">F</div>
-          <div>
+          <h2>Fitly</h2>
+        </div>
+        <button className="hamburger" onClick={() => setIsDrawerOpen(true)} aria-label="Open menu">
+          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+      </header>
+      {isDrawerOpen && <div className="drawer-overlay" onClick={() => setIsDrawerOpen(false)} aria-hidden="true"></div>}
+
+      <aside className={`sidebar ${isDrawerOpen ? "drawer-open" : ""}`}>
+        <div className="brand">
+          <div className="brand-mark">F</div>
+          <div className="brand-text">
             <p className="eyebrow">Fitness dashboard</p>
             <h2>Fitly</h2>
           </div>
           <ThemeToggle />
+          <button className="close-drawer" onClick={() => setIsDrawerOpen(false)} aria-label="Close menu">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
         </div>
         <div className="user-chip">
           <strong>{user?.name || "Athlete"}</strong>
@@ -622,7 +645,7 @@ function Dashboard({ user, data, onRefresh, onLogout }) {
         </div>
         <nav className="nav-links" role="tablist" aria-label="Dashboard navigation">
           {["dashboard", "planner", "nutrition", "progress", "library", "history"].map((tab) => (
-            <button key={tab} className={activeTab === tab ? "active" : ""} onClick={() => setActiveTab(tab)} role="tab" aria-selected={activeTab === tab}>
+            <button key={tab} className={activeTab === tab ? "active" : ""} onClick={() => { setActiveTab(tab); setIsDrawerOpen(false); }} role="tab" aria-selected={activeTab === tab}>
               {tab === "dashboard" && "Dashboard"}
               {tab === "planner" && "Programs"}
               {tab === "nutrition" && "Nutrition"}

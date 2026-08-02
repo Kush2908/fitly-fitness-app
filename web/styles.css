@@ -1376,7 +1376,6 @@ textarea {
   }
 
   .trend-chart {
-    grid-template-columns: repeat(14, minmax(34px, 1fr));
     min-height: 210px;
   }
 
@@ -1456,10 +1455,7 @@ textarea {
     padding: 10px;
   }
 
-  .sidebar {
-    margin: -10px -10px 0;
-    padding: 14px;
-  }
+
 
   .auth-hero,
   .auth-card,

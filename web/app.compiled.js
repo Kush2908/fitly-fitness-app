@@ -616,6 +616,14 @@ function Dashboard({
   });
   const [notice, setNotice] = useState("");
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  useEffect(() => {
+    if (isDrawerOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+  }, [isDrawerOpen]);
   useEffect(() => {
     setHabitForm({
       water_glasses: data.today.water_glasses,
@@ -750,15 +758,78 @@ function Dashboard({
   };
   return /*#__PURE__*/React.createElement("div", {
     className: "app-shell"
-  }, /*#__PURE__*/React.createElement("aside", {
-    className: "sidebar"
+  }, /*#__PURE__*/React.createElement("header", {
+    className: "mobile-header"
   }, /*#__PURE__*/React.createElement("div", {
     className: "brand"
   }, /*#__PURE__*/React.createElement("div", {
     className: "brand-mark"
-  }, "F"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+  }, "F"), /*#__PURE__*/React.createElement("h2", null, "Fitly")), /*#__PURE__*/React.createElement("button", {
+    className: "hamburger",
+    onClick: () => setIsDrawerOpen(true),
+    "aria-label": "Open menu"
+  }, /*#__PURE__*/React.createElement("svg", {
+    viewBox: "0 0 24 24",
+    width: "24",
+    height: "24",
+    stroke: "currentColor",
+    strokeWidth: "2",
+    fill: "none",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, /*#__PURE__*/React.createElement("line", {
+    x1: "3",
+    y1: "12",
+    x2: "21",
+    y2: "12"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "3",
+    y1: "6",
+    x2: "21",
+    y2: "6"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "3",
+    y1: "18",
+    x2: "21",
+    y2: "18"
+  })))), isDrawerOpen && /*#__PURE__*/React.createElement("div", {
+    className: "drawer-overlay",
+    onClick: () => setIsDrawerOpen(false),
+    "aria-hidden": "true"
+  }), /*#__PURE__*/React.createElement("aside", {
+    className: `sidebar ${isDrawerOpen ? "drawer-open" : ""}`
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "brand"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "brand-mark"
+  }, "F"), /*#__PURE__*/React.createElement("div", {
+    className: "brand-text"
+  }, /*#__PURE__*/React.createElement("p", {
     className: "eyebrow"
-  }, "Fitness dashboard"), /*#__PURE__*/React.createElement("h2", null, "Fitly")), /*#__PURE__*/React.createElement(ThemeToggle, null)), /*#__PURE__*/React.createElement("div", {
+  }, "Fitness dashboard"), /*#__PURE__*/React.createElement("h2", null, "Fitly")), /*#__PURE__*/React.createElement(ThemeToggle, null), /*#__PURE__*/React.createElement("button", {
+    className: "close-drawer",
+    onClick: () => setIsDrawerOpen(false),
+    "aria-label": "Close menu"
+  }, /*#__PURE__*/React.createElement("svg", {
+    viewBox: "0 0 24 24",
+    width: "24",
+    height: "24",
+    stroke: "currentColor",
+    strokeWidth: "2",
+    fill: "none",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, /*#__PURE__*/React.createElement("line", {
+    x1: "18",
+    y1: "6",
+    x2: "6",
+    y2: "18"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "6",
+    y1: "6",
+    x2: "18",
+    y2: "18"
+  })))), /*#__PURE__*/React.createElement("div", {
     className: "user-chip"
   }, /*#__PURE__*/React.createElement("strong", null, user?.name || "Athlete"), /*#__PURE__*/React.createElement("button", {
     className: "ghost-button",
@@ -770,7 +841,10 @@ function Dashboard({
   }, ["dashboard", "planner", "nutrition", "progress", "library", "history"].map(tab => /*#__PURE__*/React.createElement("button", {
     key: tab,
     className: activeTab === tab ? "active" : "",
-    onClick: () => setActiveTab(tab),
+    onClick: () => {
+      setActiveTab(tab);
+      setIsDrawerOpen(false);
+    },
     role: "tab",
     "aria-selected": activeTab === tab
   }, tab === "dashboard" && "Dashboard", tab === "planner" && "Programs", tab === "nutrition" && "Nutrition", tab === "progress" && "Progress", tab === "library" && "Library", tab === "history" && "History"))), /*#__PURE__*/React.createElement("div", {

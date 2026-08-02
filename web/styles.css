@@ -1181,6 +1181,12 @@ textarea {
   background: rgba(0, 0, 0, 0.1);
 }
 
+.mobile-header,
+.drawer-overlay,
+.close-drawer {
+  display: none;
+}
+
 @media (max-width: 1120px) {
   .auth-shell,
   .app-shell,
@@ -1249,15 +1255,78 @@ textarea {
   }
 
   .sidebar {
-    position: relative;
-    z-index: 1;
-    gap: 14px;
-    margin: -12px -12px 0;
-    border-radius: 0 0 20px 20px;
-    border-left: 0;
-    border-right: 0;
-    border-top: 0;
-    background: rgba(12, 15, 20, 0.94);
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 85%;
+    max-width: 360px;
+    z-index: 50;
+    background: var(--panel);
+    border-radius: 0 24px 24px 0;
+    margin: 0;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .sidebar.drawer-open {
+    transform: translateX(0);
+  }
+
+  .mobile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: var(--panel);
+    border-radius: 18px;
+    border: 1px solid var(--line);
+    margin-bottom: 16px;
+  }
+
+  .hamburger {
+    background: transparent;
+    border: none;
+    color: var(--text);
+    cursor: pointer;
+    padding: 12px;
+    margin: -12px;
+    min-height: 44px;
+    min-width: 44px;
+    display: grid;
+    place-items: center;
+  }
+
+  .close-drawer {
+    display: grid;
+    place-items: center;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    cursor: pointer;
+    padding: 12px;
+    margin: -12px -12px -12px auto;
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .drawer-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 40;
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.3s ease forwards;
+  }
+
+  .brand-text {
+    display: none;
   }
 
   .brand {

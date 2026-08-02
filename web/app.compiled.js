@@ -159,6 +159,8 @@ const CHARTS = {
     color: "var(--sand)"
   }
 };
+
+// Helper to format workout timer display
 const formatTimer = seconds => {
   const mins = Math.floor(seconds / 60).toString().padStart(2, "0");
   const secs = Math.floor(seconds % 60).toString().padStart(2, "0");

@@ -480,6 +480,7 @@ textarea {
   font-size: 0.95rem;
 }
 
+/* Water logger component */
 .water-logger {
   display: flex;
   flex-direction: column;

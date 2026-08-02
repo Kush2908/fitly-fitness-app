@@ -776,9 +776,9 @@ function Dashboard({ user, data, onRefresh, onLogout }) {
                   <div className="water-logger">
                     <span className="water-logger-label">Water glasses</span>
                     <div className="water-counter">
-                      <button type="button" className="ghost-button" onClick={() => post("/api/water", {amount: -1})} aria-label="Remove one water glass">-</button>
-                      <strong className="water-count">{data.today.water_glasses}</strong>
-                      <button type="button" className="ghost-button" onClick={() => post("/api/water", {amount: 1})} aria-label="Add one water glass">+</button>
+                      <button type="button" className="ghost-button" onClick={() => setHabitForm({ ...habitForm, water_glasses: Math.max(0, habitForm.water_glasses - 1) })} aria-label="Remove one water glass">-</button>
+                      <strong className="water-count">{habitForm.water_glasses}</strong>
+                      <button type="button" className="ghost-button" onClick={() => setHabitForm({ ...habitForm, water_glasses: habitForm.water_glasses + 1 })} aria-label="Add one water glass">+</button>
                     </div>
                   </div>
                   <label>

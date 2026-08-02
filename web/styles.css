@@ -47,6 +47,7 @@ body::before {
   content: "";
   position: fixed;
   inset: 0;
+  z-index: -1;
   pointer-events: none;
   background-image:
     linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
@@ -65,6 +66,7 @@ textarea {
 .auth-shell,
 .app-shell {
   position: relative;
+  z-index: 1;
   display: grid;
   gap: 24px;
   padding: 24px;
@@ -258,7 +260,6 @@ textarea {
 }
 
 .mode-toggle,
-.two-up,
 .stats-grid,
 .content-grid,
 .hero-rings,
@@ -270,6 +271,12 @@ textarea {
 .library-filters {
   display: grid;
   gap: 18px;
+}
+
+.two-up {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .mode-toggle {
@@ -342,6 +349,7 @@ input,
 select,
 textarea {
   width: 100%;
+  min-width: 0;
   padding: 14px 16px;
   border-radius: 14px;
   border: 1px solid var(--line);
@@ -998,6 +1006,7 @@ textarea {
   width: 20px;
   height: 20px;
   transition: transform 300ms ease;
+  pointer-events: none;
 }
 
 .activity-timeline {
@@ -1055,15 +1064,15 @@ textarea {
 
 [data-theme="light"] {
   --bg: #f4f6f9;
-  --panel: rgba(255, 255, 255, 0.88);
+  --panel: #ffffff;
   --panel-strong: #ffffff;
   --surface: rgba(240, 243, 248, 0.9);
   --surface-soft: rgba(230, 235, 242, 0.8);
-  --field: rgba(240, 243, 248, 0.92);
-  --text: #1a1d23;
-  --text-secondary: #5a6478;
-  --muted: #6b7280;
-  --line: rgba(0, 0, 0, 0.1);
+  --field: #ffffff;
+  --text: #111827;
+  --text-secondary: #374151;
+  --muted: #4b5563;
+  --line: rgba(0, 0, 0, 0.15);
   --shadow: 0 24px 72px rgba(0, 0, 0, 0.08);
   color-scheme: light;
 }
@@ -1137,6 +1146,13 @@ textarea {
 
 [data-theme="light"] .status-chip {
   background: rgba(245, 158, 11, 0.1);
+}
+
+[data-theme="light"] .status-chip.unlocked,
+[data-theme="light"] .badge-card.unlocked {
+  background: rgba(20, 184, 166, 0.1);
+  border-color: rgba(20, 184, 166, 0.4);
+  color: #0f766e;
 }
 
 [data-theme="light"] .plan-meta span {
@@ -1233,9 +1249,8 @@ textarea {
   }
 
   .sidebar {
-    position: sticky;
-    top: 0;
-    z-index: 10;
+    position: relative;
+    z-index: 1;
     gap: 14px;
     margin: -12px -12px 0;
     border-radius: 0 0 20px 20px;

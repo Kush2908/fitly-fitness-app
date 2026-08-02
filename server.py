@@ -396,7 +396,7 @@ def get_exercises():
     ]
 
 
-def build_history(conn, user_id, days=14):
+def build_history(conn, user_id, days=7):
     start = (date.today() - timedelta(days=days - 1)).isoformat()
     habits = {
         row["entry_date"]: dict(row)

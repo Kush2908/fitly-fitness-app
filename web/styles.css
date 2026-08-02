@@ -653,7 +653,7 @@ textarea {
 
 .trend-chart {
   display: grid;
-  grid-template-columns: repeat(14, minmax(0, 1fr));
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 10px;
   min-height: 280px;
   align-items: end;

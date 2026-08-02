@@ -6,6 +6,7 @@
   --surface-soft: rgba(31, 36, 46, 0.7);
   --field: rgba(10, 12, 16, 0.78);
   --text: #f4f7fb;
+  --text-secondary: #8a95a7;
   --muted: #9aa5b7;
   --line: rgba(255, 255, 255, 0.09);
   --orange: #f59e0b;
@@ -18,6 +19,10 @@
   --radius-xl: 28px;
   --radius-lg: 22px;
   --radius-md: 16px;
+}
+
+html {
+  overflow-x: hidden;
 }
 
 * {
@@ -35,6 +40,7 @@ body {
     linear-gradient(135deg, rgba(20, 184, 166, 0.16) 0%, transparent 34%),
     linear-gradient(225deg, rgba(96, 165, 250, 0.13) 0%, transparent 32%),
     linear-gradient(180deg, #050608 0%, var(--bg) 44%, #101219 100%);
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 body::before {
@@ -81,25 +87,10 @@ textarea {
   backdrop-filter: blur(18px);
   border: 1px solid var(--line);
   box-shadow: var(--shadow);
-}
-
-.auth-hero,
-.auth-card,
-.sidebar,
-.hero,
-.panel,
-.stat-card {
   border-radius: 32px;
   background: var(--panel);
-}
-
-.auth-hero,
-.auth-card,
-.sidebar,
-.hero,
-.panel,
-.stat-card {
   padding: 28px;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .auth-hero h1,
@@ -363,6 +354,7 @@ select:focus,
 textarea:focus {
   outline: 2px solid rgba(20, 184, 166, 0.32);
   border-color: rgba(20, 184, 166, 0.55);
+  box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.1);
 }
 
 textarea {
@@ -483,6 +475,33 @@ textarea {
 .empty-state {
   color: var(--muted);
   line-height: 1.6;
+  text-align: center;
+  padding: 32px 24px;
+  font-size: 0.95rem;
+}
+
+.water-logger {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.water-logger-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.water-counter {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.water-count {
+  font-size: 1.25rem;
+  font-family: "Space Grotesk", sans-serif;
 }
 
 .challenge-item,
@@ -914,6 +933,237 @@ textarea {
   justify-content: end;
 }
 
+.stat-card,
+.plan-card,
+.exercise-card,
+.badge-card,
+.insight-card {
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.stat-card:hover,
+.plan-card:hover,
+.exercise-card:hover,
+.badge-card:hover,
+.insight-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.6);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.content-grid {
+  animation: fadeIn 0.35s ease both;
+}
+
+.theme-toggle {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  padding: 8px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  transition: transform 300ms ease, background 200ms ease;
+}
+
+.theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: rotate(15deg);
+}
+
+.theme-toggle svg {
+  width: 20px;
+  height: 20px;
+  transition: transform 300ms ease;
+}
+
+.activity-timeline {
+  display: grid;
+  gap: 0;
+}
+
+.activity-item {
+  display: grid;
+  grid-template-columns: 24px 1fr auto;
+  gap: 12px;
+  align-items: start;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+}
+
+.activity-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-top: 5px;
+  justify-self: center;
+}
+
+.activity-dot.workout {
+  background: var(--blue);
+}
+
+.activity-dot.meal {
+  background: var(--green);
+}
+
+.activity-dot.metric {
+  background: var(--orange);
+}
+
+.activity-text {
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.activity-text strong {
+  font-weight: 600;
+}
+
+.activity-time {
+  font-size: 0.82rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+[data-theme="light"] {
+  --bg: #f4f6f9;
+  --panel: rgba(255, 255, 255, 0.88);
+  --panel-strong: #ffffff;
+  --surface: rgba(240, 243, 248, 0.9);
+  --surface-soft: rgba(230, 235, 242, 0.8);
+  --field: rgba(240, 243, 248, 0.92);
+  --text: #1a1d23;
+  --text-secondary: #5a6478;
+  --muted: #6b7280;
+  --line: rgba(0, 0, 0, 0.1);
+  --shadow: 0 24px 72px rgba(0, 0, 0, 0.08);
+  color-scheme: light;
+}
+
+[data-theme="light"] body {
+  background:
+    linear-gradient(135deg, rgba(20, 184, 166, 0.06) 0%, transparent 34%),
+    linear-gradient(225deg, rgba(96, 165, 250, 0.05) 0%, transparent 32%),
+    linear-gradient(180deg, #f0f2f6 0%, var(--bg) 44%, #e8eaf0 100%);
+}
+
+[data-theme="light"] body::before {
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+}
+
+[data-theme="light"] .ring {
+  background: linear-gradient(180deg, rgba(245, 248, 252, 0.96), rgba(230, 235, 245, 0.94));
+}
+
+[data-theme="light"] .ring-track {
+  stroke: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .progress-track {
+  background: rgba(0, 0, 0, 0.07);
+}
+
+[data-theme="light"] .timer-display {
+  background:
+    radial-gradient(circle at 50% 38%, rgba(20, 184, 166, 0.08), transparent 36%),
+    linear-gradient(180deg, rgba(248, 250, 252, 0.96), rgba(235, 240, 248, 0.94));
+}
+
+[data-theme="light"] .brand-mark {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="light"] .workout-badge {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="light"] .error-banner,
+[data-theme="light"] .loading-state {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}
+
+[data-theme="light"] .mode-toggle button,
+[data-theme="light"] .nav-links button {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .mode-toggle button.active,
+[data-theme="light"] .nav-links button.active {
+  background: linear-gradient(135deg, rgba(20, 184, 166, 0.12), rgba(96, 165, 250, 0.08));
+  border-color: rgba(20, 184, 166, 0.24);
+}
+
+[data-theme="light"] .ghost-button,
+[data-theme="light"] .plan-template-button {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .notice-chip,
+[data-theme="light"] .pill {
+  background: rgba(96, 165, 250, 0.1);
+}
+
+[data-theme="light"] .status-chip {
+  background: rgba(245, 158, 11, 0.1);
+}
+
+[data-theme="light"] .plan-meta span {
+  background: rgba(96, 165, 250, 0.1);
+}
+
+[data-theme="light"] .accent-orange { background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(255, 255, 255, 0.95)); }
+[data-theme="light"] .accent-green { background: linear-gradient(135deg, rgba(20, 184, 166, 0.12), rgba(255, 255, 255, 0.95)); }
+[data-theme="light"] .accent-blue { background: linear-gradient(135deg, rgba(96, 165, 250, 0.12), rgba(255, 255, 255, 0.95)); }
+[data-theme="light"] .accent-rose { background: linear-gradient(135deg, rgba(251, 113, 133, 0.12), rgba(255, 255, 255, 0.95)); }
+[data-theme="light"] .tone-orange { background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(255, 255, 255, 0.95)); }
+[data-theme="light"] .tone-blue { background: linear-gradient(135deg, rgba(96, 165, 250, 0.1), rgba(255, 255, 255, 0.95)); }
+[data-theme="light"] .tone-green { background: linear-gradient(135deg, rgba(20, 184, 166, 0.1), rgba(255, 255, 255, 0.95)); }
+[data-theme="light"] .tone-neutral { background: linear-gradient(135deg, rgba(148, 163, 184, 0.1), rgba(255, 255, 255, 0.95)); }
+
+[data-theme="light"] .trend-bar-wrap {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .theme-toggle {
+  background: rgba(0, 0, 0, 0.06);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .theme-toggle:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
 @media (max-width: 1120px) {
   .auth-shell,
   .app-shell,
@@ -929,10 +1179,6 @@ textarea {
 
   .nav-links {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .stats-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -1042,7 +1288,6 @@ textarea {
     gap: 8px;
   }
 
-  .nav-links button,
   .mode-toggle button,
   .primary-button,
   .secondary-button,
@@ -1052,6 +1297,7 @@ textarea {
   }
 
   .nav-links button {
+    min-height: 44px;
     padding: 11px 10px;
     border-radius: 12px;
     font-size: 0.92rem;
@@ -1090,7 +1336,6 @@ textarea {
     min-width: 0;
   }
 
-  .hero-rings,
   .two-up,
   .plan-grid,
   .macro-grid,
@@ -1147,12 +1392,20 @@ textarea {
     font-size: 0.68rem;
   }
 
-  .workout-item,
   .meal-item,
   .history-row,
   .metric-row {
     grid-template-columns: 1fr;
     justify-items: start;
+  }
+
+  .workout-item {
+    grid-template-columns: auto 1fr;
+    gap: 10px;
+  }
+
+  .workout-item > span:last-child {
+    grid-column: 1 / -1;
   }
 
   .meal-macros {
@@ -1178,6 +1431,10 @@ textarea {
 }
 
 @media (max-width: 430px) {
+  .two-up {
+    grid-template-columns: 1fr;
+  }
+
   .auth-shell,
   .app-shell {
     padding: 10px;

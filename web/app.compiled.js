@@ -164,6 +164,136 @@ const formatTimer = seconds => {
   const secs = Math.floor(seconds % 60).toString().padStart(2, "0");
   return `${mins}:${secs}`;
 };
+function ThemeToggle() {
+  const [theme, setTheme] = useState(() => {
+    const saved = localStorage.getItem("fitly-theme");
+    if (saved) return saved;
+    return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+  });
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("fitly-theme", theme);
+  }, [theme]);
+  const toggle = () => setTheme(theme === "dark" ? "light" : "dark");
+  return /*#__PURE__*/React.createElement("button", {
+    className: "theme-toggle",
+    onClick: toggle,
+    "aria-label": `Switch to ${theme === "dark" ? "light" : "dark"} theme`,
+    type: "button"
+  }, theme === "dark" ? /*#__PURE__*/React.createElement("svg", {
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "2",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, /*#__PURE__*/React.createElement("circle", {
+    cx: "12",
+    cy: "12",
+    r: "5"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "12",
+    y1: "1",
+    x2: "12",
+    y2: "3"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "12",
+    y1: "21",
+    x2: "12",
+    y2: "23"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "4.22",
+    y1: "4.22",
+    x2: "5.64",
+    y2: "5.64"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "18.36",
+    y1: "18.36",
+    x2: "19.78",
+    y2: "19.78"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "1",
+    y1: "12",
+    x2: "3",
+    y2: "12"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "21",
+    y1: "12",
+    x2: "23",
+    y2: "12"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "4.22",
+    y1: "19.78",
+    x2: "5.64",
+    y2: "18.36"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "18.36",
+    y1: "5.64",
+    x2: "19.78",
+    y2: "4.22"
+  })) : /*#__PURE__*/React.createElement("svg", {
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "2",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, /*#__PURE__*/React.createElement("path", {
+    d: "M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+  })));
+}
+function RecentActivity({
+  data
+}) {
+  const activities = useMemo(() => {
+    const items = [];
+    (data.workouts || []).forEach(w => {
+      items.push({
+        type: "workout",
+        text: `Logged workout: ${w.name}`,
+        detail: `${w.workout_type} · ${w.minutes} min`,
+        date: w.workout_date
+      });
+    });
+    (data.meals || []).forEach(m => {
+      items.push({
+        type: "meal",
+        text: `Tracked meal: ${m.title}`,
+        detail: `${m.calories} kcal`,
+        date: m.meal_date
+      });
+    });
+    (data.body_metrics || []).forEach(b => {
+      items.push({
+        type: "metric",
+        text: "Updated body metrics",
+        detail: `${b.weight} kg`,
+        date: b.entry_date
+      });
+    });
+    items.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+    return items.slice(0, 10);
+  }, [data.workouts, data.meals, data.body_metrics]);
+  return /*#__PURE__*/React.createElement("div", {
+    className: "activity-timeline"
+  }, activities.length > 0 ? activities.map((item, index) => /*#__PURE__*/React.createElement("div", {
+    className: "activity-item",
+    key: `${item.type}-${item.date}-${index}`
+  }, /*#__PURE__*/React.createElement("span", {
+    className: `activity-dot ${item.type}`
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "activity-text"
+  }, /*#__PURE__*/React.createElement("strong", null, item.text), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: "var(--muted)",
+      fontSize: "0.82rem"
+    }
+  }, item.detail)), /*#__PURE__*/React.createElement("span", {
+    className: "activity-time"
+  }, item.date ? formatDate(item.date) : ""))) : /*#__PURE__*/React.createElement("div", {
+    className: "empty-state"
+  }, "No recent activity. Start logging to see your timeline."));
+}
 function AuthScreen({
   onAuth
 }) {
@@ -296,7 +426,11 @@ function Ring({
   const circumference = 2 * Math.PI * 44;
   const offset = circumference * (1 - ratio);
   return /*#__PURE__*/React.createElement("div", {
-    className: `ring ring-${tone}`
+    className: `ring ring-${tone}`,
+    role: "progressbar",
+    "aria-valuenow": Math.round(value),
+    "aria-valuemax": max,
+    "aria-label": label
   }, /*#__PURE__*/React.createElement("svg", {
     viewBox: "0 0 120 120"
   }, /*#__PURE__*/React.createElement("circle", {
@@ -622,17 +756,21 @@ function Dashboard({
     className: "brand-mark"
   }, "F"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
     className: "eyebrow"
-  }, "Fitness dashboard"), /*#__PURE__*/React.createElement("h2", null, "Fitly"))), /*#__PURE__*/React.createElement("div", {
+  }, "Fitness dashboard"), /*#__PURE__*/React.createElement("h2", null, "Fitly")), /*#__PURE__*/React.createElement(ThemeToggle, null)), /*#__PURE__*/React.createElement("div", {
     className: "user-chip"
   }, /*#__PURE__*/React.createElement("strong", null, user?.name || "Athlete"), /*#__PURE__*/React.createElement("button", {
     className: "ghost-button",
     onClick: onLogout
   }, "Log out")), /*#__PURE__*/React.createElement("nav", {
-    className: "nav-links"
+    className: "nav-links",
+    role: "tablist",
+    "aria-label": "Dashboard navigation"
   }, ["dashboard", "planner", "nutrition", "progress", "library", "history"].map(tab => /*#__PURE__*/React.createElement("button", {
     key: tab,
     className: activeTab === tab ? "active" : "",
-    onClick: () => setActiveTab(tab)
+    onClick: () => setActiveTab(tab),
+    role: "tab",
+    "aria-selected": activeTab === tab
   }, tab === "dashboard" && "Dashboard", tab === "planner" && "Programs", tab === "nutrition" && "Nutrition", tab === "progress" && "Progress", tab === "library" && "Library", tab === "history" && "History"))), /*#__PURE__*/React.createElement("div", {
     className: "sidebar-card"
   }, /*#__PURE__*/React.createElement("p", {
@@ -651,7 +789,8 @@ function Dashboard({
   }, /*#__PURE__*/React.createElement("p", {
     className: "eyebrow"
   }, "Personal fitness tracker"), /*#__PURE__*/React.createElement("h1", null, "Track workouts, recovery, nutrition, and progress in one place."), /*#__PURE__*/React.createElement("p", null, "Log daily activity, follow training plans, and review your progress with simple account-based storage."), notice && /*#__PURE__*/React.createElement("div", {
-    className: "notice-chip"
+    className: "notice-chip",
+    "aria-live": "polite"
   }, notice)), /*#__PURE__*/React.createElement("div", {
     className: "hero-rings"
   }, /*#__PURE__*/React.createElement(Ring, {
@@ -730,41 +869,27 @@ function Dashboard({
       post("/api/habits/today", habitForm);
     }
   }, /*#__PURE__*/React.createElement("div", {
-    className: "water-logger",
-    style: {
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '0.5rem',
-      marginBottom: '0.5rem'
-    }
+    className: "water-logger"
   }, /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: '0.875rem',
-      fontWeight: 500,
-      color: 'var(--text-secondary)'
-    }
+    className: "water-logger-label"
   }, "Water glasses"), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '1rem'
-    }
+    className: "water-counter"
   }, /*#__PURE__*/React.createElement("button", {
     type: "button",
     className: "ghost-button",
     onClick: () => post("/api/water", {
       amount: -1
-    })
+    }),
+    "aria-label": "Remove one water glass"
   }, "-"), /*#__PURE__*/React.createElement("strong", {
-    style: {
-      fontSize: '1.25rem'
-    }
+    className: "water-count"
   }, data.today.water_glasses), /*#__PURE__*/React.createElement("button", {
     type: "button",
     className: "ghost-button",
     onClick: () => post("/api/water", {
       amount: 1
-    })
+    }),
+    "aria-label": "Add one water glass"
   }, "+"))), /*#__PURE__*/React.createElement("label", null, "Sleep hours", /*#__PURE__*/React.createElement("input", {
     type: "number",
     step: "0.5",
@@ -854,7 +979,31 @@ function Dashboard({
   })), /*#__PURE__*/React.createElement("button", {
     className: "primary-button",
     type: "submit"
-  }, "Update goals"))))), activeTab === "planner" && /*#__PURE__*/React.createElement("section", {
+  }, "Update goals")))), /*#__PURE__*/React.createElement("section", {
+    className: "content-grid"
+  }, /*#__PURE__*/React.createElement("article", {
+    className: "panel panel-large"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "panel-header"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+    className: "eyebrow"
+  }, "Activity feed"), /*#__PURE__*/React.createElement("h3", null, "Recent activity"))), /*#__PURE__*/React.createElement(RecentActivity, {
+    data: data
+  })), /*#__PURE__*/React.createElement("article", {
+    className: "panel"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "panel-header"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+    className: "eyebrow"
+  }, "Summary"), /*#__PURE__*/React.createElement("h3", null, "Quick stats"))), /*#__PURE__*/React.createElement("div", {
+    className: "insight-list"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "insight-card"
+  }, /*#__PURE__*/React.createElement("strong", null, "Sessions this week"), /*#__PURE__*/React.createElement("p", null, data.analytics.weekly_workouts, " workouts logged across ", data.analytics.weekly_minutes, " minutes.")), /*#__PURE__*/React.createElement("div", {
+    className: "insight-card"
+  }, /*#__PURE__*/React.createElement("strong", null, "Calories burned"), /*#__PURE__*/React.createElement("p", null, data.analytics.weekly_calories, " kcal from logged sessions this week.")), /*#__PURE__*/React.createElement("div", {
+    className: "insight-card"
+  }, /*#__PURE__*/React.createElement("strong", null, "Current streak"), /*#__PURE__*/React.createElement("p", null, data.analytics.streak, " consecutive active days.")))))), activeTab === "planner" && /*#__PURE__*/React.createElement("section", {
     className: "content-grid"
   }, /*#__PURE__*/React.createElement("article", {
     className: "panel panel-large"

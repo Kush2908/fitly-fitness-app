@@ -80,6 +80,104 @@ const formatTimer = (seconds) => {
   return `${mins}:${secs}`;
 };
 
+function ThemeToggle() {
+  const [theme, setTheme] = useState(() => {
+    const saved = localStorage.getItem("fitly-theme");
+    if (saved) return saved;
+    return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("fitly-theme", theme);
+  }, [theme]);
+
+  const toggle = () => setTheme(theme === "dark" ? "light" : "dark");
+
+  return (
+    <button
+      className="theme-toggle"
+      onClick={toggle}
+      aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
+      type="button"
+    >
+      {theme === "dark" ? (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+      ) : (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      )}
+    </button>
+  );
+}
+
+function RecentActivity({ data }) {
+  const activities = useMemo(() => {
+    const items = [];
+
+    (data.workouts || []).forEach((w) => {
+      items.push({
+        type: "workout",
+        text: `Logged workout: ${w.name}`,
+        detail: `${w.workout_type} · ${w.minutes} min`,
+        date: w.workout_date
+      });
+    });
+
+    (data.meals || []).forEach((m) => {
+      items.push({
+        type: "meal",
+        text: `Tracked meal: ${m.title}`,
+        detail: `${m.calories} kcal`,
+        date: m.meal_date
+      });
+    });
+
+    (data.body_metrics || []).forEach((b) => {
+      items.push({
+        type: "metric",
+        text: "Updated body metrics",
+        detail: `${b.weight} kg`,
+        date: b.entry_date
+      });
+    });
+
+    items.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+    return items.slice(0, 10);
+  }, [data.workouts, data.meals, data.body_metrics]);
+
+  return (
+    <div className="activity-timeline">
+      {activities.length > 0 ? (
+        activities.map((item, index) => (
+          <div className="activity-item" key={`${item.type}-${item.date}-${index}`}>
+            <span className={`activity-dot ${item.type}`}></span>
+            <div className="activity-text">
+              <strong>{item.text}</strong>
+              <br />
+              <span style={{ color: "var(--muted)", fontSize: "0.82rem" }}>{item.detail}</span>
+            </div>
+            <span className="activity-time">{item.date ? formatDate(item.date) : ""}</span>
+          </div>
+        ))
+      ) : (
+        <div className="empty-state">No recent activity. Start logging to see your timeline.</div>
+      )}
+    </div>
+  );
+}
+
 function AuthScreen({ onAuth }) {
   const [mode, setMode] = useState("signup");
   const [form, setForm] = useState({ name: "", email: "", password: "" });
@@ -199,7 +297,7 @@ function Ring({ label, value, max, tone }) {
   const circumference = 2 * Math.PI * 44;
   const offset = circumference * (1 - ratio);
   return (
-    <div className={`ring ring-${tone}`}>
+    <div className={`ring ring-${tone}`} role="progressbar" aria-valuenow={Math.round(value)} aria-valuemax={max} aria-label={label}>
       <svg viewBox="0 0 120 120">
         <circle className="ring-track" cx="60" cy="60" r="44"></circle>
         <circle
@@ -513,6 +611,7 @@ function Dashboard({ user, data, onRefresh, onLogout }) {
             <p className="eyebrow">Fitness dashboard</p>
             <h2>Fitly</h2>
           </div>
+          <ThemeToggle />
         </div>
         <div className="user-chip">
           <strong>{user?.name || "Athlete"}</strong>
@@ -520,9 +619,9 @@ function Dashboard({ user, data, onRefresh, onLogout }) {
             Log out
           </button>
         </div>
-        <nav className="nav-links">
+        <nav className="nav-links" role="tablist" aria-label="Dashboard navigation">
           {["dashboard", "planner", "nutrition", "progress", "library", "history"].map((tab) => (
-            <button key={tab} className={activeTab === tab ? "active" : ""} onClick={() => setActiveTab(tab)}>
+            <button key={tab} className={activeTab === tab ? "active" : ""} onClick={() => setActiveTab(tab)} role="tab" aria-selected={activeTab === tab}>
               {tab === "dashboard" && "Dashboard"}
               {tab === "planner" && "Programs"}
               {tab === "nutrition" && "Nutrition"}
@@ -557,7 +656,7 @@ function Dashboard({ user, data, onRefresh, onLogout }) {
               Log daily activity, follow training plans, and review your progress with simple
               account-based storage.
             </p>
-            {notice && <div className="notice-chip">{notice}</div>}
+            {notice && <div className="notice-chip" aria-live="polite">{notice}</div>}
           </div>
           <div className="hero-rings">
             <Ring label="Move" value={data.today.move_calories} max={data.goals.move_goal} tone="orange" />
@@ -650,12 +749,12 @@ function Dashboard({ user, data, onRefresh, onLogout }) {
                     post("/api/habits/today", habitForm);
                   }}
                 >
-                  <div className="water-logger" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                    <span style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--text-secondary)' }}>Water glasses</span>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <button type="button" className="ghost-button" onClick={() => post("/api/water", {amount: -1})}>-</button>
-                      <strong style={{ fontSize: '1.25rem' }}>{data.today.water_glasses}</strong>
-                      <button type="button" className="ghost-button" onClick={() => post("/api/water", {amount: 1})}>+</button>
+                  <div className="water-logger">
+                    <span className="water-logger-label">Water glasses</span>
+                    <div className="water-counter">
+                      <button type="button" className="ghost-button" onClick={() => post("/api/water", {amount: -1})} aria-label="Remove one water glass">-</button>
+                      <strong className="water-count">{data.today.water_glasses}</strong>
+                      <button type="button" className="ghost-button" onClick={() => post("/api/water", {amount: 1})} aria-label="Add one water glass">+</button>
                     </div>
                   </div>
                   <label>
@@ -770,6 +869,39 @@ function Dashboard({ user, data, onRefresh, onLogout }) {
                     Update goals
                   </button>
                 </form>
+              </article>
+            </section>
+            <section className="content-grid">
+              <article className="panel panel-large">
+                <div className="panel-header">
+                  <div>
+                    <p className="eyebrow">Activity feed</p>
+                    <h3>Recent activity</h3>
+                  </div>
+                </div>
+                <RecentActivity data={data} />
+              </article>
+              <article className="panel">
+                <div className="panel-header">
+                  <div>
+                    <p className="eyebrow">Summary</p>
+                    <h3>Quick stats</h3>
+                  </div>
+                </div>
+                <div className="insight-list">
+                  <div className="insight-card">
+                    <strong>Sessions this week</strong>
+                    <p>{data.analytics.weekly_workouts} workouts logged across {data.analytics.weekly_minutes} minutes.</p>
+                  </div>
+                  <div className="insight-card">
+                    <strong>Calories burned</strong>
+                    <p>{data.analytics.weekly_calories} kcal from logged sessions this week.</p>
+                  </div>
+                  <div className="insight-card">
+                    <strong>Current streak</strong>
+                    <p>{data.analytics.streak} consecutive active days.</p>
+                  </div>
+                </div>
               </article>
             </section>
           </>

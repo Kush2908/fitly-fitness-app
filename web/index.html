@@ -3,7 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fitly</title>
+    <meta name="description" content="Fitly — Track workouts, nutrition, and recovery in one dashboard." />
+    <meta name="theme-color" content="#07080b" />
+    <title>Fitly — Fitness Dashboard</title>
+    <script>
+      (function() {
+        var theme = localStorage.getItem("fitly-theme");
+        if (!theme) {
+          theme = window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+        }
+        document.documentElement.setAttribute("data-theme", theme);
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -15,6 +26,7 @@
   <body>
     <div id="root">
       <div class="loading-state">Loading Fitly...</div>
+      <noscript>JavaScript is required to run Fitly.</noscript>
     </div>
     <script src="/vendor/react.development.js"></script>
     <script src="/vendor/react-dom.development.js"></script>

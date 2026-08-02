@@ -953,19 +953,17 @@ function Dashboard({
   }, /*#__PURE__*/React.createElement("button", {
     type: "button",
     className: "ghost-button",
-    onClick: () => setHabitForm({
-      ...habitForm,
-      water_glasses: Math.max(0, habitForm.water_glasses - 1)
+    onClick: () => post("/api/water", {
+      amount: -1
     }),
     "aria-label": "Remove one water glass"
   }, "-"), /*#__PURE__*/React.createElement("strong", {
     className: "water-count"
-  }, habitForm.water_glasses), /*#__PURE__*/React.createElement("button", {
+  }, data.today.water_glasses), /*#__PURE__*/React.createElement("button", {
     type: "button",
     className: "ghost-button",
-    onClick: () => setHabitForm({
-      ...habitForm,
-      water_glasses: habitForm.water_glasses + 1
+    onClick: () => post("/api/water", {
+      amount: 1
     }),
     "aria-label": "Add one water glass"
   }, "+"))), /*#__PURE__*/React.createElement("label", null, "Sleep hours", /*#__PURE__*/React.createElement("input", {
